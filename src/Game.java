@@ -58,7 +58,7 @@ public class Game {
                 }
             } else {
                 List<Integer> moveToGet = playerW.makeMove(board);
-                List<Integer> move = List.of(moveToGet.get(0).intValue(), moveToGet.get(1).intValue());
+                List<Integer> move = List.of(moveToGet.get(1).intValue(), moveToGet.get(2).intValue());
                 if (move != null) {
                     makeMove(move.get(0), move.get(1));
                     System.out.println("Score:  B=" + getScoreBW().get(0) + " W=" + getScoreBW().get(1));
