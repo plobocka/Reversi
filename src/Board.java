@@ -86,10 +86,16 @@ public class Board {
     }
 
     public List<List<Integer>> getLine(int row, int column, int xDir, int yDir, Disc currentColor) {
-        List<List<Integer>> line =new ArrayList<>() ;
-        int newRow = row + xDir;
-        int newColumn = column + yDir;
-        while (newRow >= 0 && newRow < BOARD_SIZE && newColumn >= 0 && newColumn < BOARD_SIZE) {
+        List<List<Integer>> line = new ArrayList<>();
+        int newRow = row;
+        int newColumn = column;
+        while (true) {
+            newRow += xDir;
+            newColumn += yDir;
+            if (newRow < 0 || newRow >= BOARD_SIZE || newColumn < 0 || newColumn >= BOARD_SIZE) {
+                line.clear();
+                return line;
+            }
             if (board[newRow][newColumn] == Disc.EMPTY) {
                 line.clear();
                 return line;
@@ -98,11 +104,10 @@ public class Board {
                 return line;
             }
             line.add(List.of(newRow, newColumn));
-            newRow += xDir;
-            newColumn += yDir;
         }
-        return line;
     }
+
+
 
     public boolean isFull() {
         for (Disc[] row : board) {

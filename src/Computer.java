@@ -23,8 +23,7 @@ public class Computer {
     public List<Integer> makeMove(Board boardState) {
         this.board = copyBoard(boardState);
         List<Integer> move;
-        move = MinMax(this.board, this.getPlayer(), 3, 0, true);
-        System.out.println("Computer move: " + move);
+        move = MinMax(this.board, this.getPlayer(), 1, 0, true);
         return move;
     }
 
@@ -38,9 +37,11 @@ public class Computer {
         }
     }
 
-    public List<Integer> MinMax(Board board, Disc player, int depth, double heuristic, boolean isMaximizing) {
+
+
+    public List<Integer> MinMax(Board board, Disc player, int depth, int heuristic, boolean isMaximizing) {
         if (isGameOver(this.getPlayer())) {
-            return null;
+            return List.of(MobilityStrategy(board, player));
         }
         if (depth == 0) {
             return List.of(MobilityStrategy(board, player));
@@ -51,7 +52,6 @@ public class Computer {
             List<Integer> bestMove = null;
             for (List<Integer> move : possibleMoves) {
                 Board newBoard = copyBoard(board);
-                newBoard.setDisc(player, move.get(0), move.get(1));
                 makeMove(move.get(0), move.get(1), newBoard, player);
                 int eval = MinMax(newBoard, player.opponent(), depth - 1, heuristic, false).get(0);
                 if (eval >= maxEval) {
@@ -59,7 +59,7 @@ public class Computer {
                     bestMove = List.of(move.get(0), move.get(1));
                 }
             }
-            return List.of(maxEval, bestMove.get(0), bestMove.get(1));
+            return bestMove != null ? List.of(maxEval, bestMove.get(0), bestMove.get(1)) : List.of(maxEval);
         } else {
             int minEval = Integer.MAX_VALUE;
             List<Integer> bestMove = null;
@@ -72,7 +72,7 @@ public class Computer {
                     bestMove = List.of(move.get(0), move.get(1));
                 }
             }
-            return List.of(minEval, bestMove.get(0), bestMove.get(1));
+            return bestMove != null ? List.of(minEval, bestMove.get(0), bestMove.get(1)) : List.of(minEval);
         }
     }
 

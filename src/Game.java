@@ -16,6 +16,7 @@ public class Game {
 //        play();
 //        AIgame();
         OneAIplay();
+//        AIvsAI();
     }
 
     public void play() {
@@ -58,16 +59,48 @@ public class Game {
                 }
             } else {
                 List<Integer> moveToGet = playerW.makeMove(board);
-                List<Integer> move = List.of(moveToGet.get(1).intValue(), moveToGet.get(2).intValue());
-                if (move != null) {
+                if (moveToGet.size() != 1) {
+                    List<Integer> move = List.of(moveToGet.get(1).intValue(), moveToGet.get(2).intValue());
                     makeMove(move.get(0), move.get(1));
                     System.out.println("Score:  B=" + getScoreBW().get(0) + " W=" + getScoreBW().get(1));
                 } else {
                     System.out.println("No possible moves. Pass.");
+                    currentPlayerDisc = currentPlayerDisc.switchColor();
                 }
             }
         }
         System.out.println("Game over!");
+        System.out.println("Final score: B=" + getScoreBW().get(0) + " W=" + getScoreBW().get(1));
+    }
+
+    public void AIvsAI() {
+        while(!this.isGameOver()) {
+            System.out.println(board);
+            System.out.println("It's " + currentPlayerDisc + "'s turn.");
+            if (currentPlayerDisc == Disc.BLACK) {
+                List<Integer> moveToGet = playerB.makeMove(board);
+                if (moveToGet.size() != 1) {
+                    List<Integer> move = List.of(moveToGet.get(1).intValue(), moveToGet.get(2).intValue());
+                    makeMove(move.get(0), move.get(1));
+                    System.out.println("Score:  B=" + getScoreBW().get(0) + " W=" + getScoreBW().get(1));
+                } else {
+                    System.out.println("No possible moves. Pass.");
+                    currentPlayerDisc = currentPlayerDisc.switchColor();
+                }
+            } else {
+                List<Integer> moveToGet = playerW.makeMove(board);
+                if (moveToGet.size() != 1) {
+                    List<Integer> move = List.of(moveToGet.get(1).intValue(), moveToGet.get(2).intValue());
+                    makeMove(move.get(0), move.get(1));
+                    System.out.println("Score:  B=" + getScoreBW().get(0) + " W=" + getScoreBW().get(1));
+                } else {
+                    System.out.println("No possible moves. Pass.");
+                    currentPlayerDisc = currentPlayerDisc.switchColor();
+                }
+            }
+        }
+        System.out.println("BOARD");
+        System.out.println(board);
         System.out.println("Final score: B=" + getScoreBW().get(0) + " W=" + getScoreBW().get(1));
     }
 
