@@ -23,7 +23,8 @@ public class Computer {
     public List<Integer> makeMove(Board boardState) {
         this.board = copyBoard(boardState);
         List<Integer> move;
-        move = MinMax(this.board, this.getPlayer(), 1, 0, true);
+//        move = MinMax(this.board, this.getPlayer(), 1, 0, true);
+        move = MinMax(this.board, this.getPlayer(), 5, 0, true);
         return move;
     }
 
@@ -37,14 +38,25 @@ public class Computer {
         }
     }
 
-
+    private Integer CornerStrategy(Board board, Disc player) {
+        var maxPlayerCorners = 0;
+        var minPlayerCorners = 0;
+        for (List<Integer> corner : Board.CORNERS) {
+            if (board.getBoard()[corner.get(0)][corner.get(1)] == player) {
+                maxPlayerCorners++;
+            } else if (board.getBoard()[corner.get(0)][corner.get(1)] == player.opponent()) {
+                minPlayerCorners++;
+            }
+        }
+        return 25 * (maxPlayerCorners - minPlayerCorners);
+    }
 
     public List<Integer> MinMax(Board board, Disc player, int depth, int heuristic, boolean isMaximizing) {
         if (isGameOver(this.getPlayer())) {
-            return List.of(MobilityStrategy(board, player));
+            return List.of(CornerStrategy(board, player));
         }
         if (depth == 0) {
-            return List.of(MobilityStrategy(board, player));
+            return List.of(CornerStrategy(board, player));
         }
         List<List<Integer>> possibleMoves = Game.showPossibleMoves(player, board);
         if (isMaximizing) {
@@ -70,6 +82,54 @@ public class Computer {
                 if (eval <= minEval) {
                     minEval = eval;
                     bestMove = List.of(move.get(0), move.get(1));
+                }
+            }
+            return bestMove != null ? List.of(minEval, bestMove.get(0), bestMove.get(1)) : List.of(minEval);
+        }
+    }
+
+    public List<Integer> alphaBeta(Board board, Disc player, int depth, int heuristic, boolean isMaximizing, int alphaValue, int betaValue) {
+        if (isGameOver(this.getPlayer()) || depth == 0) {
+            return List.of(CornerStrategy(board, player));
+        }
+        int alpha = alphaValue;
+        int beta = betaValue;
+        List<List<Integer>> possibleMoves = Game.showPossibleMoves(player, board);
+        if (isMaximizing) {
+            int maxEval = Integer.MIN_VALUE;
+            List<Integer> bestMove = null;
+            for (List<Integer> move : possibleMoves) {
+                Board newBoard = copyBoard(board);
+                makeMove(move.get(0), move.get(1), newBoard, player);
+                int eval = alphaBeta(newBoard, player.opponent(), depth - 1, heuristic, false, alpha, beta).get(0);
+                if (eval >= maxEval) {
+                    maxEval = eval;
+                    bestMove = List.of(move.get(0), move.get(1));
+                }
+                if (maxEval >= alpha) {
+                    alpha = maxEval;
+                }
+                if (beta <= alpha) {
+                    break;
+                }
+            }
+            return bestMove != null ? List.of(maxEval, bestMove.get(0), bestMove.get(1)) : List.of(maxEval);
+        } else {
+            int minEval = Integer.MAX_VALUE;
+            List<Integer> bestMove = null;
+            for (List<Integer> move : possibleMoves) {
+                Board newBoard = copyBoard(board);
+                makeMove(move.get(0), move.get(1), newBoard, player);
+                int eval = alphaBeta(newBoard, player.opponent(), depth - 1, heuristic, true, alpha, beta).get(0);
+                if (eval <= minEval) {
+                    minEval = eval;
+                    bestMove = List.of(move.get(0), move.get(1));
+                }
+                if (minEval <= beta) {
+                    beta = minEval;
+                }
+                if (beta <= alpha) {
+                    break;
                 }
             }
             return bestMove != null ? List.of(minEval, bestMove.get(0), bestMove.get(1)) : List.of(minEval);

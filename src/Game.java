@@ -15,8 +15,8 @@ public class Game {
         playerW = new Computer(Disc.WHITE, board);
 //        play();
 //        AIgame();
-        OneAIplay();
-//        AIvsAI();
+//        OneAIplay();
+        AIvsAI();
     }
 
     public void play() {
