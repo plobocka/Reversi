@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Scanner;
 
@@ -8,19 +7,18 @@ public class Game {
     private Disc currentPlayerDisc = Disc.BLACK;
     private Computer playerB;
     private Computer playerW;
+    private int turn = 0;
 
     public Game(Board board) {
         this.board = board;
         playerB = new Computer(Disc.BLACK, board);
         playerW = new Computer(Disc.WHITE, board);
-//        play();
-//        AIgame();
-//        OneAIplay();
         AIvsAI();
     }
 
     public void play() {
         while(!this.isGameOver()) {
+            turn++;
             System.out.println(board);
             System.out.println("It's " + currentPlayerDisc + "'s turn.");
             List<List<Integer>> possibleMoves = showPossibleMoves(currentPlayerDisc, board);
@@ -42,6 +40,7 @@ public class Game {
 
     public void OneAIplay() {
         while(!this.isGameOver()) {
+            turn++;
             System.out.println(board);
             System.out.println("It's " + currentPlayerDisc + "'s turn.");
             if (currentPlayerDisc == Disc.BLACK) {
@@ -60,7 +59,7 @@ public class Game {
             } else {
                 List<Integer> moveToGet = playerW.makeMove(board);
                 if (moveToGet.size() != 1) {
-                    List<Integer> move = List.of(moveToGet.get(1).intValue(), moveToGet.get(2).intValue());
+                    List<Integer> move = List.of(moveToGet.get(1), moveToGet.get(2));
                     makeMove(move.get(0), move.get(1));
                     System.out.println("Score:  B=" + getScoreBW().get(0) + " W=" + getScoreBW().get(1));
                 } else {
@@ -74,13 +73,21 @@ public class Game {
     }
 
     public void AIvsAI() {
+        long totalBTime = 0;
         while(!this.isGameOver()) {
+            turn++;
             System.out.println(board);
             System.out.println("It's " + currentPlayerDisc + "'s turn.");
             if (currentPlayerDisc == Disc.BLACK) {
+                System.err.println("Player B's turn");
+                long startTime = System.nanoTime();
                 List<Integer> moveToGet = playerB.makeMove(board);
+                long endTime = System.nanoTime();
+                long duration = (endTime - startTime) / 1000000; // Czas w milisekundach
+                totalBTime += duration;
+                System.err.println("Player B's move time: " + duration + "ms");
                 if (moveToGet.size() != 1) {
-                    List<Integer> move = List.of(moveToGet.get(1).intValue(), moveToGet.get(2).intValue());
+                    List<Integer> move = List.of(moveToGet.get(1), moveToGet.get(2));
                     makeMove(move.get(0), move.get(1));
                     System.out.println("Score:  B=" + getScoreBW().get(0) + " W=" + getScoreBW().get(1));
                 } else {
@@ -88,9 +95,14 @@ public class Game {
                     currentPlayerDisc = currentPlayerDisc.switchColor();
                 }
             } else {
+                System.err.println("Player W's turn");
+                long startTime = System.nanoTime();
                 List<Integer> moveToGet = playerW.makeMove(board);
+                long endTime = System.nanoTime();
+                long duration = (endTime - startTime) / 1000000; // Czas w milisekundach
+                System.err.println("Player W's move time: " + duration + "ms");
                 if (moveToGet.size() != 1) {
-                    List<Integer> move = List.of(moveToGet.get(1).intValue(), moveToGet.get(2).intValue());
+                    List<Integer> move = List.of(moveToGet.get(1), moveToGet.get(2));
                     makeMove(move.get(0), move.get(1));
                     System.out.println("Score:  B=" + getScoreBW().get(0) + " W=" + getScoreBW().get(1));
                 } else {
@@ -102,14 +114,8 @@ public class Game {
         System.out.println("BOARD");
         System.out.println(board);
         System.out.println("Final score: B=" + getScoreBW().get(0) + " W=" + getScoreBW().get(1));
-    }
-
-    public void switchPlayer() {
-        if (this.currentPlayerDisc == Disc.BLACK) {
-            this.currentPlayerDisc = Disc.WHITE;
-        } else {
-            this.currentPlayerDisc = Disc.BLACK;
-        }
+        System.out.println("Turns: " + turn);
+        System.out.println("Player B's average move time: " + totalBTime / turn + "ms");
     }
 
     public List<Integer> getScoreBW() {
@@ -139,18 +145,6 @@ public class Game {
             }
         }
         return possibleMoves;
-    }
-
-    public void highlightPossibleMoves(Disc currentDisc) {
-        List<List<Integer>> possibleMoves = showPossibleMoves(currentDisc, board);
-        if (possibleMoves.isEmpty()) {
-            System.out.println("No possible moves.");
-        } else {
-            System.out.println("Possible moves: " + possibleMoves);
-            for (List<Integer> move : possibleMoves) {
-                board.setDisc(Disc.POSSIBLE, move.get(0), move.get(1));
-            }
-        }
     }
 
     public void makeMove(int row, int column) {

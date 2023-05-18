@@ -23,6 +23,17 @@ public class Board {
             List.of(BOARD_SIZE - 1, BOARD_SIZE - 1)
     );
 
+    public static final int[][] STABILITY_SCORES = {
+            {100, -25, 10, 5, 5, 10, -25, 100},
+            {-25, -50, 1, 1, 1, 1, -50, -25},
+            {10, 1, 3, 2, 2, 3, 1, 10},
+            {5, 1, 2, 1, 1, 2, 1, 5},
+            {5, 1, 2, 1, 1, 2, 1, 5},
+            {10, 1, 3, 2, 2, 3, 1, 10},
+            {-25, -50, 1, 1, 1, 1, -50, -25},
+            {100, -25, 10, 5, 5, 10, -25, 100}
+    };
+
     private final Disc[][] board;
 
     public Disc[][] getBoard() {
@@ -65,24 +76,6 @@ public class Board {
 
     public void setDisc(Disc disc, int row, int column) {
         board[row][column] = disc;
-    }
-
-    public Integer getDisc(int row, int column) {
-        return board[row][column].getNumber();
-    }
-
-    public boolean flipDiscs(int row, int column, Disc currentPlayerDisc) {
-        boolean flipped = false;
-        for (List<Integer> direction : DIRECTIONS) {
-            List<List<Integer>> line = getLine(row, column, direction.get(0), direction.get(1), currentPlayerDisc);
-            if (!line.isEmpty()) {
-                for (List<Integer> disc : line) {
-                    board[disc.get(0)][disc.get(1)] = currentPlayerDisc;
-                }
-                flipped = true;
-            }
-        }
-        return flipped;
     }
 
     public List<List<Integer>> getLine(int row, int column, int xDir, int yDir, Disc currentColor) {
