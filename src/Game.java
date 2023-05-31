@@ -36,6 +36,7 @@ public class Game {
         }
         System.out.println("Game over!");
         System.out.println("Final score: B=" + getScoreBW().get(0) + " W=" + getScoreBW().get(1));
+
     }
 
     public void OneAIplay() {
@@ -116,6 +117,7 @@ public class Game {
         System.out.println("Final score: B=" + getScoreBW().get(0) + " W=" + getScoreBW().get(1));
         System.out.println("Turns: " + turn);
         System.out.println("Player B's average move time: " + totalBTime / turn + "ms");
+        System.out.println("Nodes visited: " + (playerB.getNodesVisited()+playerW.getNodesVisited()));
     }
 
     public List<Integer> getScoreBW() {

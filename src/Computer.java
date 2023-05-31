@@ -4,14 +4,15 @@ public class Computer {
     private Disc player;
     private Board board;
     private int round = 1;
-    private static final int MAX_DEPTH = 6;
+    private static final int MAX_DEPTH = 7;
+    private int nodesVisited = 0;
     /*
      * heuristic functions:
      * 1. mobility
      * 2. corners
      * 3. stability
      */
-    private static final int HEURISTIC_CHOICE = 2;
+    private static final int HEURISTIC_CHOICE = 1;
 
     public Computer(Disc player, Board board) {
         this.player = player;
@@ -21,6 +22,13 @@ public class Computer {
     public List<Integer> makeMove(Board boardState) {
         this.board = copyBoard(boardState);
         List<Integer> move;
+//        if (this.player == Disc.BLACK) {
+//            HEURISTIC_CHOICE = 3;
+//            move = alphaBeta(this.board, this.getPlayer(), MAX_DEPTH, HEURISTIC_CHOICE, true, Integer.MIN_VALUE, Integer.MAX_VALUE);
+//        } else {
+//            HEURISTIC_CHOICE = 2;
+//            move = alphaBeta(this.board, this.getPlayer(), MAX_DEPTH, HEURISTIC_CHOICE, true, Integer.MIN_VALUE, Integer.MAX_VALUE);
+//        }
         move = alphaBeta(this.board, this.getPlayer(), MAX_DEPTH, HEURISTIC_CHOICE, true, Integer.MIN_VALUE, Integer.MAX_VALUE);
 //        move = alphaBetaAdaptive(this.board, this.getPlayer(), MAX_DEPTH, HEURISTIC_CHOICE, true, Integer.MIN_VALUE, Integer.MAX_VALUE);
 //        move = minMax(this.board, this.getPlayer(), MAX_DEPTH, HEURISTIC_CHOICE, true);
@@ -94,6 +102,7 @@ public class Computer {
                     maxEval = eval;
                     bestMove = List.of(move.get(0), move.get(1));
                 }
+                nodesVisited++;
             }
             return bestMove != null ? List.of(maxEval, bestMove.get(0), bestMove.get(1)) : List.of(maxEval);
         } else {
@@ -107,6 +116,7 @@ public class Computer {
                     minEval = eval;
                     bestMove = List.of(move.get(0), move.get(1));
                 }
+                nodesVisited++;
             }
             return bestMove != null ? List.of(minEval, bestMove.get(0), bestMove.get(1)) : List.of(minEval);
         }
@@ -136,6 +146,7 @@ public class Computer {
                 if (beta <= alpha) {
                     break;
                 }
+                nodesVisited++;
             }
             return bestMove != null ? List.of(maxEval, bestMove.get(0), bestMove.get(1)) : List.of(maxEval);
         } else {
@@ -155,6 +166,7 @@ public class Computer {
                 if (beta <= alpha) {
                     break;
                 }
+                nodesVisited++;
             }
             return bestMove != null ? List.of(minEval, bestMove.get(0), bestMove.get(1)) : List.of(minEval);
         }
@@ -197,6 +209,7 @@ public class Computer {
                 if (beta <= alpha) {
                     break;
                 }
+                nodesVisited++;
             }
             return bestMove != null ? List.of(maxEval, bestMove.get(0), bestMove.get(1)) : List.of(maxEval);
         } else {
@@ -216,6 +229,7 @@ public class Computer {
                 if (beta <= alpha) {
                     break;
                 }
+                nodesVisited++;
             }
             return bestMove != null ? List.of(minEval, bestMove.get(0), bestMove.get(1)) : List.of(minEval);
         }
@@ -263,5 +277,9 @@ public class Computer {
 
     public int getRound() {
         return round;
+    }
+
+    public int getNodesVisited() {
+        return nodesVisited;
     }
 }
